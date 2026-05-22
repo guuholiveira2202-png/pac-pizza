@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Pizza | O Maior Nível do Sabor</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #05070a;
+            --neon-blue: #00e5ff;
+            --neon-blue-glow: rgba(0, 229, 255, 0.4);
+            --pac-yellow: #ffde00;
+            --pac-yellow-glow: rgba(255, 222, 0, 0.5);
+            
+            --sue-green: #39ff14;
+            --blinky-red: #ff003c;
+            --pinky-pink: #ff66ff;
+            --inky-cyan: #00ffff;
+            --clyde-orange: #ffb852;
+            --funky-purple: #b100ff;
+            
+            --text-light: #ffffff;
+            --text-gray: #a0a8bf;
+            
+            --poppins: 'Poppins', sans-serif;
+            --arcade: 'Press Start 2P', cursive;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fff; box-shadow: 0 0 10px var(--neon-blue); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 222, 0, 0.05), transparent 25%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 25px 25px, 25px 25px;
+            color: var(--text-light);
+            font-family: var(--poppins);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .arcade-font { font-family: var(--arcade); }
+
+        /* --- Animações Globais --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(37, 211, 102, 0.8), inset 0 0 10px rgba(255,255,255,0.3); }
+            100% { box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }
+        }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px; max-width: 1600px; margin: 0 auto; 
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(5, 7, 10, 0.75);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .logo {
+            color: transparent; -webkit-text-stroke: 1.5px var(--pac-yellow); 
+            font-size: 28px; text-decoration: none; text-shadow: 0 0 20px var(--pac-yellow-glow);
+            letter-spacing: 2px; transition: 0.3s;
+        }
+        .logo:hover { text-shadow: 0 0 30px var(--pac-yellow); transform: scale(1.02); }
+
+        nav ul { display: flex; gap: 20px; list-style: none; align-items: center; }
+        nav ul li a {
+            color: var(--text-gray); text-decoration: none; font-size: 13px; font-weight: 600;
+            text-transform: uppercase; padding: 8px 16px; border-radius: 20px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            color: var(--neon-blue); background: rgba(0, 229, 255, 0.05);
+            border-color: rgba(0, 229, 255, 0.3); box-shadow: 0 0 15px var(--neon-blue-glow);
+        }
+
+        .game-status {
+            border: 1px solid rgba(255, 222, 0, 0.3); padding: 10px 15px; border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255,222,0,0.05), rgba(0,0,0,0.5)); 
+            box-shadow: 0 0 15px var(--pac-yellow-glow); font-size: 10px; line-height: 1.8; color: var(--neon-blue);
+        }
+        .game-status span { color: #fff; }
+        .lives { color: var(--blinky-red); font-size: 12px; letter-spacing: 2px; }
+
+        .hero {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; min-height: 60vh; padding: 40px 20px;
+            animation: fadeInUp 0.8s ease-out backwards; animation-delay: 0.2s;
+        }
+        .hero h1 { font-size: 52px; margin-bottom: 20px; font-weight: 700; line-height: 1.2; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .hero h1 span { color: var(--pac-yellow); text-shadow: 0 0 20px var(--pac-yellow-glow); }
+        .hero p { font-size: 17px; color: var(--text-gray); max-width: 650px; margin-bottom: 40px; font-weight: 300; }
+
+        .dashboard {
+            display: flex; justify-content: center; gap: 25px; max-width: 1400px;
+            margin: -20px auto 40px auto; padding: 0 20px; flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out backwards; animation-delay: 0.4s;
+        }
+        .promo-box {
+            width: 100%; max-width: 420px; 
+            background: linear-gradient(135deg, rgba(255, 222, 0, 0.08), rgba(0,0,0,0.4));
+            backdrop-filter: blur(10px); border-radius: 24px;
+            border: 1px solid rgba(255, 222, 0, 0.3); padding: 35px; text-align: center; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px var(--pac-yellow-glow);
+            transition: 0.3s;
+        }
+        .promo-box:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 0 30px var(--pac-yellow-glow); border-color: var(--pac-yellow); }
+        .promo-box h4 { font-size: 13px; color: var(--pac-yellow); margin-bottom: 12px; letter-spacing: 1px; line-height: 1.5; }
+        .promo-box p { font-size: 14px; color: var(--text-gray); margin-bottom: 25px; }
+
+        /* --- Novo Módulo Customizado Meio a Meio --- */
+        .custom-pizza-section {
+            width: 100%; max-width: 1400px; margin: 0 auto 40px auto; padding: 0 20px;
+            animation: fadeInUp 0.8s ease-out backwards; animation-delay: 0.5s;
+        }
+        .custom-box {
+            background: linear-gradient(145deg, rgba(0, 229, 255, 0.04) 0%, rgba(5, 7, 10, 0.8) 100%);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 24px; padding: 40px; text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 0 25px rgba(0, 229, 255, 0.15);
+        }
+        .custom-box h3 { font-size: 13px; color: var(--neon-blue); margin-bottom: 8px; letter-spacing: 1.5px; }
+        .custom-box h4 { font-size: 20px; color: #fff; margin-bottom: 15px; font-weight: 600; }
+        .custom-box p { font-size: 14px; color: var(--text-gray); max-width: 600px; margin: 0 auto 30px auto; font-weight: 300; }
+        
+        .custom-selectors { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 10px; }
+        .select-wrapper { display: flex; flex-direction: column; text-align: left; min-width: 280px; flex: 1; max-width: 420px; }
+        .select-wrapper label { font-size: 11px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; font-family: var(--arcade); }
+        .select-wrapper select {
+            background: #0d121e; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
+            padding: 16px; color: #fff; font-family: var(--poppins); font-size: 14px; outline: none;
+            transition: 0.3s; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            -webkit-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300e5ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 16px; padding-right: 45px;
+        }
+        .select-wrapper select:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue-glow); }
+
+        .btn-pill {
+            background: linear-gradient(90deg, #ffde00, #ffb852); color: #000; border: none; 
+            padding: 14px 35px; font-size: 11px; border-radius: 50px; cursor: pointer; font-weight: 700; 
+            box-shadow: 0 5px 20px rgba(255, 222, 0, 0.4); transition: all 0.3s; text-decoration: none;
+        }
+        .btn-pill:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 30px rgba(255, 222, 0, 0.6); }
+        
+        .btn-pill.cyan-variant {
+            background: linear-gradient(90deg, #00e5ff, #00ffff);
+            box-shadow: 0 5px 20px rgba(0, 229, 255, 0.3);
+        }
+        .btn-pill.cyan-variant:hover { box-shadow: 0 8px 30px rgba(0, 229, 255, 0.5); }
+
+        .menu-divider {
+            display: flex; align-items: center; text-align: center; max-width: 1400px;
+            margin: 80px auto 50px auto; color: var(--neon-blue); font-size: 18px; 
+            text-shadow: 0 0 12px var(--neon-blue-glow); letter-spacing: 3px; padding: 0 20px;
+            animation: fadeInUp 0.8s ease-out backwards; animation-delay: 0.5s;
+        }
+        .menu-divider::before, .menu-divider::after { 
+            content: ''; flex: 1; border-bottom: 1px solid rgba(0, 229, 255, 0.3); margin: 0 20px; box-shadow: 0 1px 10px var(--neon-blue);
+        }
+
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px;
+            max-width: 1400px; margin: 0 auto; padding: 0 20px 80px 20px;
+        }
+
+        .pizza-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.6) 100%);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.08); border-left: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid transparent; border-right: 1px solid transparent;
+            border-radius: 24px; padding: 40px 30px; text-align: center; display: flex; 
+            flex-direction: column; align-items: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; animation: fadeInUp 0.6s ease-out backwards;
+        }
+        .pizza-card:nth-child(1) { animation-delay: 0.1s; }
+        .pizza-card:nth-child(2) { animation-delay: 0.2s; }
+        .pizza-card:nth-child(3) { animation-delay: 0.3s; }
+        .pizza-card:nth-child(4) { animation-delay: 0.4s; }
+        .pizza-card:nth-child(5) { animation-delay: 0.5s; }
+        .pizza-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .pizza-card:hover { transform: translateY(-12px); border-bottom: 1px solid; border-right: 1px solid; background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.8) 100%); }
+
+        .pizza-img {
+            width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 25px;
+            border: 4px solid currentColor; box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 20px currentColor; 
+            transition: transform 0.5s ease;
+        }
+        .pizza-card:hover .pizza-img { transform: scale(1.1) rotate(5deg); }
+
+        .pizza-card h3 { font-size: 17px; margin-bottom: 6px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .pizza-card h4 { font-size: 10px; margin-bottom: 18px; letter-spacing: 1.5px; opacity: 0.9; line-height: 1.4; }
+        .pizza-card p { font-size: 14px; color: var(--text-gray); margin-bottom: 30px; font-weight: 300; flex-grow: 1; line-height: 1.7; }
+        .price { font-size: 26px; margin-bottom: 25px; font-weight: 700; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+        .add-cart-btn {
+            background: transparent; border: 2px solid currentColor; color: currentColor;
+            padding: 14px 28px; border-radius: 30px; font-size: 10px; cursor: pointer; 
+            transition: all 0.3s; width: 100%; font-weight: 700; letter-spacing: 1px;
+        }
+        .add-cart-btn:hover { background: currentColor; color: var(--bg-dark); box-shadow: 0 0 25px currentColor; transform: scale(1.05); }
+
+        .card-sue { color: var(--sue-green); } .card-sue:hover { border-color: var(--sue-green); box-shadow: 0 20px 40px rgba(57, 255, 20, 0.15); }
+        .card-blinky { color: var(--blinky-red); } .card-blinky:hover { border-color: var(--blinky-red); box-shadow: 0 20px 40px rgba(255, 0, 60, 0.15); }
+        .card-pinky { color: var(--pinky-pink); } .card-pinky:hover { border-color: var(--pinky-pink); box-shadow: 0 20px 40px rgba(255, 102, 255, 0.15); }
+        .card-inky { color: var(--inky-cyan); } .card-inky:hover { border-color: var(--inky-cyan); box-shadow: 0 20px 40px rgba(0, 255, 255, 0.15); }
+        .card-clyde { color: var(--clyde-orange); } .card-clyde:hover { border-color: var(--clyde-orange); box-shadow: 0 20px 40px rgba(255, 184, 82, 0.15); }
+        .card-funky { color: var(--funky-purple); } .card-funky:hover { border-color: var(--funky-purple); box-shadow: 0 20px 40px rgba(177, 0, 255, 0.15); }
+
+        .power-ups {
+            display: flex; justify(content): center; align-items: center; gap: 40px; flex-wrap: wrap;
+            padding: 40px 30px; max-width: 1100px; margin: 0 auto 80px auto; 
+            background: linear-gradient(90deg, rgba(0,229,255,0.02), rgba(0,229,255,0.08), rgba(0,229,255,0.02));
+            border-top: 1px solid rgba(0,229,255,0.2); border-bottom: 1px solid rgba(0,229,255,0.2);
+            border-radius: 20px; backdrop-filter: blur(5px); animation: fadeInUp 0.8s ease-out backwards; animation-delay: 0.6s;
+        }
+        .power-item { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .power-item span.emoji { font-size: 32px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); }
+        .power-item span.sub { color: var(--text-gray); font-size: 12px; font-weight: 300; }
+        .power-price { color: var(--pac-yellow); font-family: var(--arcade); font-size: 12px; margin-left: 10px; }
+        .power-btn { 
+            background: var(--neon-blue); color: #000; border: none; padding: 10px 20px; 
+            border-radius: 20px; font-size: 9px; font-weight: bold; cursor: pointer; margin-left: 15px;
+            box-shadow: 0 0 15px var(--neon-blue-glow); transition: all 0.3s;
+        }
+        .power-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--neon-blue); }
+
+        .cart-floating-btn {
+            position: fixed; bottom: 40px; right: 40px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff;
+            border: 2px solid rgba(255,255,255,0.8); border-radius: 50%; width: 75px; height: 75px; display: flex;
+            align-items: center; justify-content: center; font-size: 30px; cursor: pointer;
+            z-index: 99; transition: transform 0.2s; animation: pulseGlow 2.5s infinite;
+        }
+        .cart-floating-btn:hover { transform: scale(1.15) rotate(-10deg); animation: none; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.6); }
+        .cart-badge {
+            position: absolute; top: -2px; right: -2px; background: #ff003c; color: white;
+            font-size: 10px; font-family: var(--arcade); padding: 6px 8px; border-radius: 50%; 
+            border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .cart-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(2, 3, 5, 0.85); z-index: 1000; display: none; 
+            justify-content: center; align-items: center; 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px;
+        }
+        .cart-modal {
+            background: linear-gradient(145deg, rgba(20,25,35,0.95), rgba(10,12,18,0.95)); 
+            border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 24px;
+            width: 100%; max-width: 550px; padding: 40px; box-shadow: 0 20px 60px rgba(0, 229, 255, 0.2);
+            max-height: 85vh; display: flex; flex-direction: column; position: relative;
+        }
+        .cart-modal h2 { font-size: 15px; color: var(--pac-yellow); margin-bottom: 30px; text-align: center; text-shadow: 0 2px 10px rgba(255, 222, 0, 0.3); line-height: 1.6; }
+        .cart-items-container { flex: 1; overflow-y: auto; margin-bottom: 25px; padding-right: 10px; }
+        .cart-item-row {
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; color: #fff; transition: background 0.2s;
+        }
+        .cart-item-row:hover { background: rgba(255,255,255,0.02); border-radius: 8px; padding: 15px 10px; }
+        .cart-item-remove { 
+            background: rgba(255, 0, 60, 0.1); color: var(--blinky-red); border: 1px solid rgba(255, 0, 60, 0.3); 
+            padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.3s;
+        }
+        .cart-item-remove:hover { background: var(--blinky-red); color: #fff; box-shadow: 0 0 15px rgba(255,0,60,0.5); }
+
+        .cart-total-box { font-size: 16px; text-align: right; margin-bottom: 25px; color: var(--sue-green); letter-spacing: 1px; }
+        .cart-actions { display: flex; gap: 15px; }
+        .btn-close { 
+            flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+            color: #fff; padding: 15px; border-radius: 50px; cursor: pointer; 
+            font-family: var(--arcade); font-size: 9px; transition: 0.3s;
+        }
+        .btn-close:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+        .btn-whatsapp { 
+            flex: 2; background: linear-gradient(90deg, #25D366, #128C7E); border: none; color: #fff; 
+            padding: 15px; border-radius: 50px; cursor: pointer; font-family: var(--arcade); 
+            font-size: 10px; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); transition: 0.3s;
+        }
+        .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5); }
+
+        .toast {
+            position: fixed; top: 110px; right: 40px; background: rgba(20, 25, 35, 0.95); 
+            border: 1px solid var(--sue-green); border-left: 5px solid var(--sue-green);
+            color: #fff; padding: 18px 25px; border-radius: 12px; font-family: var(--poppins); 
+            font-size: 13px; font-weight: 500; z-index: 1001; opacity: 0; transform: translateX(50px); 
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+        }
+        .toast strong { color: var(--sue-green); font-family: var(--arcade); font-size: 10px; margin-bottom: 5px; display: block; }
+
+        footer { padding: 60px 40px 30px 40px; background: rgba(2, 3, 5, 0.9); border-top: 1px solid rgba(255,255,255,0.05); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; max-width: 1400px; margin: 0 auto 50px auto; }
+        .footer-about p { color: var(--text-gray); font-size: 14px; margin-top: 20px; font-weight: 300; line-height: 1.8; max-width: 350px; }
+        .footer-links h4 { font-size: 16px; margin-bottom: 20px; color: #fff; font-weight: 600; }
+        .footer-links ul { list-style: none; }
+        .footer-links ul li { margin-bottom: 12px; }
+        .footer-links ul li a { color: var(--text-gray); text-decoration: none; font-size: 14px; transition: 0.2s; }
+        .footer-links ul li a:hover { color: var(--neon-blue); padding-left: 5px; }
+        .footer-bottom { text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 30px; font-size: 13px; color: var(--text-gray); }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; padding: 20px; gap: 15px; }
+            .logo { font-size: 24px; order: 1; }
+            nav { order: 2; width: 100%; display: flex; justify-content: center; }
+            .game-status { order: 3; width: 100%; text-align: center; }
+            .hero { min-height: 50vh; padding: 40px 15px; }
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 15px; }
+            .dashboard { gap: 15px; }
+            .custom-box { padding: 30px 20px; }
+            .custom-selectors { gap: 15px; }
+            .select-wrapper { min-width: 100%; }
+            .menu-divider { font-size: 12px; line-height: 1.6; letter-spacing: 2px; }
+            .menu-grid { grid-template-columns: 1fr; padding: 0 15px 40px 15px; }
+            .power-ups { flex-direction: column; gap: 25px; padding: 25px 15px; border-radius: 12px; }
+            .power-item { width: 100%; justify-content: space-between; }
+            .cart-modal { padding: 25px 20px; }
+            .cart-actions { flex-direction: column-reverse; }
+            .btn-close, .btn-whatsapp { width: 100%; padding: 15px; font-size: 10px; }
+            .cart-floating-btn { width: 60px; height: 60px; font-size: 24px; bottom: 20px; right: 20px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+            .footer-about p { margin: 15px auto 0 auto; }
+            .toast { right: 20px; left: 20px; top: 150px; transform: translateY(-20px); text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo arcade-font">PAC-PIZZA</a>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">HOME</a></li>
+                <li><a href="#menu">MENU</a></li>
+            </ul>
+        </nav>
+        <div class="game-status arcade-font">
+            VIDAS: <span class="lives">❤❤❤</span><br>
+            SCORE: <span id="score-display">015250</span>
+        </div>
+    </header>
+
+    <div id="toast" class="toast"><strong>+1UP OBTIDO</strong> <span>Item adicionado ao inventário.</span></div>
+
+    <div class="cart-floating-btn" onclick="openCart()">
+        🛒
+        <div class="cart-badge" id="cart-count">0</div>
+    </div>
+
+    <div class="cart-overlay" id="cart-modal">
+        <div class="cart-modal">
+            <h2 class="arcade-font">SEU INVENTÁRIO</h2>
+            <div class="cart-items-container" id="cart-items-list"></div>
+            <div class="cart-total-box arcade-font">TOTAL: R$ <span id="cart-total">0.00</span></div>
+            <div class="cart-actions">
+                <button class="btn-close" onclick="closeCart()">FECHAR JANELA</button>
+                <button class="btn-whatsapp" onclick="checkoutWhatsApp()">ENVIAR PEDIDO AO CHEFÃO</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero">
+        <h1 class="arcade-font">LEVEL UP NO <span>SEU SABOR</span></h1>
+        <p>Encare as fases da sua fome com as melhores pizzas artesanais temáticas do cenário retro. Ingredientes premium e uma experiência lendária.</p>
+        <a href="#menu" class="btn-pill arcade-font">INSERT COIN (VER MENU)</a>
+    </section>
+
+    <section class="dashboard">
+        <div class="promo-box">
+            <div style="font-size: 38px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255,222,0,0.5));">🍕⚡</div>
+            <h4 class="arcade-font">COMBO BOSS LEVEL 1</h4>
+            <p>Pizza Clyde + Maze Fries (Batata) + Refri.</p>
+            <div class="price arcade-font" style="font-size: 18px; margin-bottom: 20px; color: var(--pac-yellow);">R$ 75,00</div>
+            <button class="btn-pill arcade-font" style="padding: 12px 25px; font-size: 9px;" onclick="addToCart('Combo Boss Lvl 1', 75.00, 500)">ADICIONAR AO INVENTÁRIO</button>
+        </div>
+    </section>
+
+    <section class="custom-pizza-section">
+        <div class="custom-box">
+            <h3 class="arcade-font">🎛️ FORJADOR DE RECOMPENSAS</h3>
+            <h4>COMBINE DOIS SABORES (½ A ½)</h4>
+            <p>Selecione os dois lados do seu labirinto de sabores. O custo final do item corresponderá ao preço da metade de maior level.</p>
+            
+            <div class="custom-selectors">
+                <div class="select-wrapper">
+                    <label>Fase 01 (1ª Metade)</label>
+                    <select id="flavor1">
+                        <option value="Sue (Vegetariana)">SUE (Vegetariana) - R$ 55,00</option>
+                        <option value="Blinky (Pepperoni)">BLINKY (Pepperoni) - R$ 55,00</option>
+                        <option value="Pinky (4 Queijos)">PINKY (4 Queijos) - R$ 60,00</option>
+                        <option value="Inky (Calabresa)">INKY (Calabresa) - R$ 62,00</option>
+                        <option value="Clyde (Frango/Catupiry)">CLYDE (Frango/Catupiry) - R$ 58,00</option>
+                        <option value="Funky (Frutos do Mar)">FUNKY (Frutos do Mar) - R$ 70,00</option>
+                    </select>
+                </div>
+                
+                <div class="select-wrapper">
+                    <label>Fase 02 (2ª Metade)</label>
+                    <select id="flavor2">
+                        <option value="Blinky (Pepperoni)">BLINKY (Pepperoni) - R$ 55,00</option>
+                        <option value="Sue (Vegetariana)">SUE (Vegetariana) - R$ 55,00</option>
+                        <option value="Pinky (4 Queijos)">PINKY (4 Queijos) - R$ 60,00</option>
+                        <option value="Inky (Calabresa)">INKY (Calabresa) - R$ 62,00</option>
+                        <option value="Clyde (Frango/Catupiry)">CLYDE (Frango/Catupiry) - R$ 58,00</option>
+                        <option value="Funky (Frutos do Mar)">FUNKY (Frutos do Mar) - R$ 70,00</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="btn-pill cyan-variant arcade-font" style="margin-top: 20px; font-size: 10px;" onclick="addCustomPizzaToCart()">FORJAR DUAL-SABOR</button>
+        </div>
+    </section>
+
+    <div class="menu-divider arcade-font" id="menu">MENU DO LABIRINTO</div>
+    
+    <section class="menu-grid">
+        <div class="pizza-card card-sue">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&auto=format&fit=crop&q=80" alt="Pizza Vegetariana" class="pizza-img">
+            <h3 class="arcade-font">SUE</h3>
+            <h4 class="arcade-font">VEGETARIANA</h4>
+            <p>Brócolis frescos, palmito premium, champignon fatiado e pimentões selecionados em cama de muçarela.</p>
+            <div class="price arcade-font">R$ 55</div>
+            <button class="add-cart-btn arcade-font" onclick="addToCart('Pizza Sue', 55.00, 100)">ADICIONAR</button>
+        </div>
+
+        <div class="pizza-card card-blinky">
+            <img src="https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&auto=format&fit=crop&q=80" alt="Pizza de Pepperoni" class="pizza-img">
+            <h3 class="arcade-font">BLINKY</h3>
+            <h4 class="arcade-font">PEPPERONI</h4>
+            <p>A clássica cobertura de pepperoni picante sobre muçarela artesanal que vai te perseguir pelo labirinto.</p>
+            <div class="price arcade-font">R$ 55</div>
+            <button class="add-cart-btn arcade-font" onclick="addToCart('Pizza Blinky', 55.00, 100)">ADICIONAR</button>
+        </div>
+
+        <div class="pizza-card card-pinky">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&auto=format&fit=crop&q=80" alt="Pizza 4 Queijos" class="pizza-img">
+            <h3 class="arcade-font">PINKY</h3>
+            <h4 class="arcade-font">4 QUEIJOS</h4>
+            <p>Uma combinação cremosa e implacável de Muçarela, provolone, parmesão ralado e o autêntico gorgonzola.</p>
+            <div class="price arcade-font">R$ 60</div>
+            <button class="add-cart-btn arcade-font" onclick="addToCart('Pizza Pinky', 60.00, 100)">ADICIONAR</button>
+        </div>
+
+        <div class="pizza-card card-inky">
+            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&auto=format&fit=crop&q=80" alt="Pizza Calabresa" class="pizza-img">
+            <h3 class="arcade-font">INKY</h3>
+            <h4 class="arcade-font">CALABRESA</h4>
+            <p>Fatias finas de calabresa defumada premium, acompanhadas de rodelas de cebola roxa fresca e azeitonas.</p>
+            <div class="price arcade-font">R$ 62</div>
+            <button class="add-cart-btn arcade-font" onclick="addToCart('Pizza Inky', 62.00, 100)">ADICIONAR</button>
+        </div>
+
+        <div class="pizza-card card-clyde">
+            <img src="https://images.unsplash.com/photo-1534308983496-4fbf1a0d0cb2?w=400&auto=format&fit=crop&q=80" alt="Pizza Frango Catupiry" class="pizza-img">
+            <h3 class="arcade-font">CLYDE</h3>
+            <h4 class="arcade-font">FRANGO E CATUPIRY</h4>
+            <p>Frango desfiado suculento com requeijão cremoso Catupiry e borda recheada vulcânica inesquecível.</p>
+            <div class="price arcade-font">R$ 58</div>
+            <button class="add-cart-btn arcade-font" onclick="addToCart('Pizza Clyde', 58.00, 100)">ADICIONAR</button>
+        </div>
+
+        <div class="pizza-card card-funky">
+            <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&auto=format&fit=crop&q=80" alt="Pizza Frutos do Mar" class="pizza-img">
+            <h3 class="arcade-font">FUNKY</h3>
+            <h4 class="arcade-font">FRUTOS DO MAR</h4>
+            <p>Camarões selecionados e salteados no azeite de ervas finas sob uma camada generosa de queijo tostado.</p>
+            <div class="price arcade-font">R$ 70</div>
+            <button class="add-cart-btn arcade-font" onclick="addToCart('Pizza Funky', 70.00, 100)">ADICIONAR</button>
+        </div>
+    </section>
+
+    <div class="power-ups">
+        <h4 class="arcade-font" style="color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue-glow); width: 100%; text-align: center; margin-bottom: 10px; font-size: 18px;">POWER-UPS EXTRA</h4>
+        
+        <div class="power-item">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="emoji">🍟</span>
+                <div><strong>MAZE FRIES</strong><br><span class="sub">Porção de Batatas Crocantes</span></div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="power-price">R$ 18</div>
+                <button class="power-btn arcade-font" onclick="addToCart('Maze Fries', 18.00, 50)">+ ADD</button>
+            </div>
+        </div>
+        
+        <div class="power-item">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="emoji">🧅</span>
+                <div><strong>PELLET POPS</strong><br><span class="sub">Anéis de Cebola Empanados</span></div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="power-price">R$ 15</div>
+                <button class="power-btn arcade-font" onclick="addToCart('Pellet Pops', 15.00, 50)">+ ADD</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-about">
+                <a href="#" class="logo arcade-font" style="font-size: 22px;">PAC-PIZZA</a>
+                <p>Mesclando a nostalgia invencível dos fliperamas clássicos com a alta gastronomia urbana. Peça, pontue e domine a mesa.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="#">Tela Inicial</a></li>
+                    <li><a href="#menu">Acessar Cardápio</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Central de Atendimento</h4>
+                <ul>
+                    <li><a href="#">São Paulo - SP</a></li>
+                    <li><a href="#">suporte@pacpizza.com</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Pac-Pizza. GAME OVER para a fome.
+        </div>
+    </footer>
+
+    <script>
+        const CONFIG_WHATSAPP_NUMBER = "5511999999999"; 
+        
+        // Banco de dados interno dos valores para o cálculo dinâmico da Meio a Meio
+        const SABORES_PRECOS = {
+            'Sue (Vegetariana)': 55.00,
+            'Blinky (Pepperoni)': 55.00,
+            'Pinky (4 Queijos)': 60.00,
+            'Inky (Calabresa)': 62.00,
+            'Clyde (Frango/Catupiry)': 58.00,
+            'Funky (Frutos do Mar)': 70.00
+        };
+        
+        let cart = [];
+        let currentScore = 15250;
+        let finalCartTotalValue = 0;
+        
+        const scoreDisplay = document.getElementById('score-display');
+        const cartCountBadge = document.getElementById('cart-count');
+        const cartModalOverlay = document.getElementById('cart-modal');
+        const cartItemsListElement = document.getElementById('cart-items-list');
+        const cartTotalDisplayElement = document.getElementById('cart-total');
+        const toastNotificationElement = document.getElementById('toast');
+
+        function addToCart(itemName, itemPrice, earnedPoints) {
+            cart.push({ name: itemName, price: itemPrice });
+            triggerScoreUpdate(earnedPoints);
+            renderCartUI();
+            triggerToastNotification(`<strong>+ ${earnedPoints} PTS!</strong> <span>${itemName} adicionado.</span>`);
+        }
+
+        // Lógica específica para juntar as duas metades informadas
+        function addCustomPizzaToCart() {
+            const f1 = document.getElementById('flavor1').value;
+            const f2 = document.getElementById('flavor2').value;
+            
+            const preco1 = SABORES_PRECOS[f1];
+            const preco2 = SABORES_PRECOS[f2];
+            
+            // Regra do maior preço prevalecer
+            const precoFinal = Math.max(preco1, preco2);
+            
+            let nomeFormatado = "";
+            if (f1 === f2) {
+                nomeFormatated = `Pizza ${f1.split(' ')[0]} (Inteira)`;
+            } else {
+                nomeFormatado = `Pizza ½ ${f1.split(' ')[0]} / ½ ${f2.split(' ')[0]}`;
+            }
+            
+            // Adiciona ao carrinho principal dando um bônus especial de 150 pontos no score
+            addToCart(nomeFormatado, precoFinal, 150);
+        }
+
+        function removeTargetedCartItem(targetIndex) {
+            cart.splice(targetIndex, 1);
+            renderCartUI();
+        }
+
+        function renderCartUI() {
+            cartCountBadge.innerText = cart.length;
+            cartItemsListElement.innerHTML = '';
+            finalCartTotalValue = 0;
+
+            if (cart.length === 0) {
+                cartItemsListElement.innerHTML = '<p style="text-align:center; color:#a0a8bf; font-size:13px; margin-top:20px; font-weight:300;">Seu inventário está vazio no momento.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    finalCartTotalValue += item.price;
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'cart-item-row';
+                    itemRow.innerHTML = `
+                        <span style="font-weight: 500;">${item.name}</span>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <span style="font-weight:600; color: #fff;">R$ ${item.price.toFixed(2).replace('.', ',')}</span>
+                            <button class="cart-item-remove" onclick="removeTargetedCartItem(${index})">X</button>
+                        </div>
+                    `;
+                    cartItemsListElement.appendChild(itemRow);
+                });
+            }
+            cartTotalDisplayElement.innerText = finalCartTotalValue.toFixed(2).replace('.', ',');
+        }
+
+        function triggerScoreUpdate(pointsAmount) {
+            currentScore += pointsAmount;
+            scoreDisplay.innerText = currentScore.toString().padStart(6, '0');
+            scoreDisplay.style.color = '#fff';
+            setTimeout(() => { scoreDisplay.style.color = 'var(--neon-blue)'; }, 300);
+        }
+
+        function triggerToastNotification(displayHtml) {
+            toastNotificationElement.innerHTML = displayHtml;
+            toastNotificationElement.style.opacity = '1';
+            toastNotificationElement.style.transform = 'translateX(0)';
+            if (window.innerWidth <= 768) { toastNotificationElement.style.transform = 'translateY(0)'; }
+            
+            setTimeout(() => {
+                toastNotificationElement.style.opacity = '0';
+                if (window.innerWidth <= 768) {
+                    toastNotificationElement.style.transform = 'translateY(-20px)';
+                } else {
+                    toastNotificationElement.style.transform = 'translateX(50px)';
+                }
+            }, 3000);
+        }
+
+        function openCart() {
+            renderCartUI();
+            cartModalOverlay.style.display = 'flex';
+        }
+
+        function closeCart() {
+            cartModalOverlay.style.display = 'none';
+        }
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) {
+                alert('Seu inventário está vazio! Adicione itens primeiro.');
+                return;
+            }
+            
+            let messageText = "🕹️ *NOVO PEDIDO - PAC-PIZZA* 🕹️\n\n";
+            messageText += "Olá! Segue o meu pedido:\n";
+            messageText += "======================\n\n";
+            
+            cart.forEach((item, i) => {
+                messageText += `*${i+1}.* ${item.name}\n   └─ R$ ${item.price.toFixed(2).replace('.', ',')}\n\n`;
+            });
+            
+            messageText += "======================\n";
+            messageText += `*Total do Pedido:* R$ ${finalCartTotalValue.toFixed(2).replace('.', ',')}\n\n`;
+            messageText += "👾 Aguardo a confirmação!";
+            
+            const encodedURIString = encodeURIComponent(messageText);
+            const finalWhatsAppUrl = `https://wa.me/${CONFIG_WHATSAPP_NUMBER}?text=${encodedURIString}`;
+            
+            window.open(finalWhatsAppUrl, '_blank');
+        }
+        
+        window.onclick = function(event) {
+            if (event.target === cartModalOverlay) {
+                closeCart();
+            }
+        }
+    </script>
+</body>
+</html>
